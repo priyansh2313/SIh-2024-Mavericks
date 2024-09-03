@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Howrah Railway Station Focused Map with Masking</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        #menu {
+            position: absolute;
+            background: #efefef;
+            padding: 10px;
+            font-family: 'Open Sans', sans-serif;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="menu">
+    <input id="satellite-streets-v12" type="radio" name="rtoggle" value="satellite" checked="checked">
+    <label for="satellite-streets-v12">Satellite Streets</label>
+    <input id="light-v11" type="radio" name="rtoggle" value="light">
+    <label for="light-v11">Light</label>
+    <input id="dark-v11" type="radio" name="rtoggle" value="dark">
+    <label for="dark-v11">Dark</label>
+    <input id="streets-v12" type="radio" name="rtoggle" value="streets">
+    <label for="streets-v12">Streets</label>
+    <input id="outdoors-v12" type="radio" name="rtoggle" value="outdoors">
+    <label for="outdoors-v12">Outdoors</label>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicHJpeWFuc2h1MjMxMyIsImEiOiJjbTA5czl2emwwcDM0MnRzNGZ4M2I0bmw1In0.kDevebDg_UDAaxJu9czgDw';
+
+    // Initialize the map
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/satellite-streets-v12', // style URL
+        center: [88.3425, 22.5840], // Centered between Jan Ahar and Howrah Platform 1
+        zoom: 11, // zoom level for a detailed view
+        pitch: 45, // pitch to give 3D effect
+        bearing: -17.6,
+        antialias: true,
+        maxBounds: [
+            [88.3388, 22.5825], // Southwest corner near Jan Ahar (near Foreshore Road)
+            [88.3450, 22.5850]  // Northeast corner near Bankim Setu
+        ]
+    });
+
+    map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
+    map.keyboard.enable();
+
+    // Function to add the masking, 3D buildings, and geofence border layers
+    function addCustomLayers() {
+        const layers = map.getStyle().layers;
+        const labelLayerId = layers.find(
+            (layer) => layer.type === 'symbol' && layer.layout['text-field']
+        ).id;
+
+        // Add the geofence mask layer
+        map.addSource('geofence-mask', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': [{
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [
+                            // Outer ring (covers the whole area)
+                            [
+                                [88.3300, 21.5700], // Far bottom-left
+                                [88.3550, 21.5700], // Far bottom-right
+                                [88.3550, 22.5950], // Far top-right
+                                [88.3300, 22.5950], // Far top-left
+                                [88.3300, 22.5700]  // Closing the loop
+                            ],
+                            // Inner ring (the geofence area)
+                            [
+                                [88.3388, 22.5804], // Southwest corner near Jan Ahar (Foreshore Road)
+                                [88.3388, 22.5850], // Northwest corner (Bankim Setu)
+                                [88.3450, 22.5850], // Northeast corner (Bankim Setu)
+                                [88.3450, 22.5812], // Southeast corner near Howrah Platform No. 1
+                                [88.3388, 22.5770]  // Closing the loop
+                            ]
+                        ]
+                    }
+                }]
+            }
+        });
+
+        map.addLayer({
+            'id': 'geofence-mask-layer',
+            'type': 'fill',
+            'source': 'geofence-mask',
+            'layout': {},
+            'paint': {
+                'fill-color': 'rgba(2, 0, 0, 1)', // Semi-transparent dark color
+                'fill-outline-color': 'rgba(0, 0, 0, 1)'
+            }
+        });
+
+        // Add 3D buildings layer
+        map.addLayer(
+            {
+                'id': 'add-3d-buildings',
+                'source': 'composite',
+                'source-layer': 'building',
+                'filter': ['==', 'extrude', 'true'],
+                'type': 'fill-extrusion',
+                'minzoom': 15,
+                'paint': {
+                    'fill-extrusion-color': '#aaa',
+                    'fill-extrusion-height': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        15,
+                        0,
+                        15.05,
+                        ['get', 'height']
+                    ],
+                    'fill-extrusion-base': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        15,
+                        0,
+                        15.05,
+                        ['get', 'min_height']
+                    ],
+                    'fill-extrusion-opacity': 0.6
+                }
+            },
+            labelLayerId
+        );
+
+        // Add geofence border layer
+        map.addSource('howrah-geofence', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [
+                        [
+                            [88.3388, 22.5804], // Southwest corner near Jan Ahar (Foreshore Road)
+                            [88.3388, 22.5850], // Northwest corner (Bankim Setu)
+                            [88.3450, 22.5850], // Northeast corner (Bankim Setu)
+                            [88.3450, 22.5812], // Southeast corner near Howrah Platform No. 1
+                            [88.3388, 22.5770]  // Closing the loop
+                        ]
+                    ]
+                }
+            }
+        });
+
+        map.addLayer({
+            'id': 'howrah-geofence-border',
+            'type': 'line',
+            'source': 'howrah-geofence',
+            'layout': {},
+            'paint': {
+                'line-color': '#FF0000',
+                'line-width': 3
+            }
+        });
+    }
+
+    map.on('style.load', () => {
+        addCustomLayers();
+    });
+
+    // Switch between different map styles and re-add layers
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    function switchLayer(layer) {
+        const layerId = layer.target.value;
+        map.setStyle('mapbox://styles/mapbox/' + layerId + '-v12');
+        map.once('style.load', () => {
+            addCustomLayers();
+        });
+    }
+
+    for (const input of inputs) {
+        input.onclick = switchLayer;
+    }
+
+
+
+    
+    map.on('load', function () {
+        const pointsOfInterest = [
+            { name: "Jan Ahar", coordinates: [88.3388, 22.5804] },
+            { name: "Platform 1 Entrance", coordinates: [88.3425, 22.5820] },
+            { name: "Bankim Setu", coordinates: [88.3450, 22.5850] }
+            // Add more points here
+        ];
+
+        // Add markers for points of interest
+        pointsOfInterest.forEach(point => {
+            new mapboxgl.Marker()
+                .setLngLat(point.coordinates)
+                .setPopup(new mapboxgl.Popup().setHTML(`<h3>${point.name}</h3>`))
+                .addTo(map);
+        });
+
+        // Example of calculating and displaying directions using Mapbox Directions API
+        const directionsService = new mapboxgl.Directions({
+            accessToken: mapboxgl.accessToken
+        });
+
+        directionsService.setOrigin(pointsOfInterest[0].coordinates); // Jan Ahar
+        directionsService.setDestination(pointsOfInterest[1].coordinates); // Platform 1 Entrance
+        directionsService.query();
+    });
+</script>
+
+
+
+</body>
+</html>
