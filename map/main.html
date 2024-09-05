@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pathfinder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <ul class="sidebar">
+      <li onclick="hideSidebar()"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg></a></li>
+      <li><a href="#">Rewards</a></li>
+      <li><a href="#">Rule Book</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Login</a></li>
+    </ul>
+    <ul>
+      <li><a href="#">PATHFINDER</a></li>
+      <li class="hideOnMobile"><a href="#">Rewards</a></li>
+      <li class="hideOnMobile"><a href="#">Rule Book</a></li>
+      <li class="hideOnMobile"><a href="#">About</a></li>
+      <li class="hideOnMobile"><a href="#">Login</a></li>
+      <li class="menu-button" onclick="showSidebar()"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a></li>
+    </ul>
+  </nav>
+  <div class="sec">
+    <div class="search">
+      <input id="bar" type="text" placeholder="name of station">
+      <img src="icons8-search-30.png" alt="" class="search-icon">
+    </div>
+    <div class="map">
+
+    </div>
+
+    <div class="loc">
+      <input id="to" type="text" placeholder="destination">
+      <input id="from" type="text" placeholder="current location">
+    </div>
+  </div>
+  
+  <div class="footer">
+    <ul class="property">
+       <button class="pro"><a href="#">Safety and Security Concerns</a></button>
+       <button class="pro"><a href="#">Platform info</a></button>
+       <button class="pro"><a href="#">Utilities</a></button>
+       <button class="pro"><a href="#">Cleanliness and Hygiene</a></button>
+    </ul>
+  </div>
+  <script>
+    function showSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.style.display = 'flex';
+    }
+    function hideSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
