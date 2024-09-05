@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        scene.background = new THREE.Color(0xffffff); // Sets the background color to white
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // Load the GLTF model
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            'New folder/scene.gltf', // Updated path to the GLTF model
+            function(gltf) {
+                const model = gltf.scene;
+                model.position.set(0, 0, 0); // Set the position as needed
+                model.scale.set(10, 10, 10); // Scale the model if needed
+                scene.add(model);
+            },
+            undefined, // Optional progress callback
+            function(error) {
+                console.error('An error happened', error);
+            }
+        );
+
+
+        loader.load(
+            'New folder/scene.gltf', // Updated path to the GLTF model
+            function(gltf) {
+                const model1 = gltf.scene;
+                model1.position.set(0, 0, 0); // Set the position as needed
+                model1.scale.set(10, 10, 10); // Scale the model if needed
+                scene.add(model1);
+            },
+            undefined, // Optional progress callback
+            function(error) {
+                console.error('An error happened', error);
+            }
+        );
+
+
+        
+
+       
+
+
+
+        
+
+        
+        // Basic animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        camera.position.z = 5; // Adjust camera position as needed
+    </script>
+</body>
+</html>

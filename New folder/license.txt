@@ -1,0 +1,11 @@
+Model Information:
+* title:	Airport Ticket Counter
+* source:	https://sketchfab.com/3d-models/airport-ticket-counter-131ef77c00ad4ac09607025a3e2572bf
+* author:	SilverChen (https://sketchfab.com/silverchen1727)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Airport Ticket Counter" (https://sketchfab.com/3d-models/airport-ticket-counter-131ef77c00ad4ac09607025a3e2572bf) by SilverChen (https://sketchfab.com/silverchen1727) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
